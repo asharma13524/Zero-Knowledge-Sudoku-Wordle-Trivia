@@ -19,7 +19,7 @@ export default function SudoKu() {
     const [sudokuSnackBarMsg, setSudokuSnackBarMsg] = useState<string>("");
 
     // Aleo
-    const [aleoPrivateKey, setAleoPrivateKey] = useState<string>("APrivateKey1zkpF8DDkDEmjBPUVRzb5PWeM4iYo9bVEv6m71xvr2KDtXJw");
+    const [aleoPrivateKey, setAleoPrivateKey] = useState<string>("APrivateKey1zkp8Farwtxy5RuDmcYWin5daBfNGsfnhoEw4oajC8Ad2r4p");
     const [openAleoDialog, setOpenAleoDialog] = useState<boolean>(false);
     const [isWaitingForAleoResponse, setIsWaitingForAleoResponse] = useState(false);
     const [aleoResponse, setAleoResponse] = useState("");
@@ -118,7 +118,7 @@ export default function SudoKu() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ "puzzle": puzzleArray, "solution": getUserSolutionArray(), "private_key": aleoPrivateKey }),
-                timeout: 240000 // 4 minute
+                timeout: 2400000 // 4 minute
             });
             const responseData = await response.json();
             setAleoResponse(responseData["output"]);

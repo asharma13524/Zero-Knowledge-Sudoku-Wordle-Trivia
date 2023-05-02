@@ -1,5 +1,5 @@
 export async function fetchWithTimeout(resource: string, options: any = {},) {
-    const { timeout = 8000 } = options;
+    const { timeout = 800000 } = options;
 
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
@@ -13,7 +13,7 @@ export async function fetchWithTimeout(resource: string, options: any = {},) {
 
 /**
  * Converts a number to a 32 byte hex string so structure mirrors Noir's for accurate hashing
- * 
+ *
  * @param {number} num - number to be hexlified
  * @returns 32 bytes hex string
  */
