@@ -5,6 +5,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import Aleo from './components/Aleo/Aleo';
 import { WordleApp } from './components/Wordle/WordleApp';
 import Trivia from './components/Trivia/Trivia';
+import Transfer from './components/Transfer/Transfer';
 
 function App() {
   const mdTheme = createTheme();
@@ -39,6 +40,9 @@ function App() {
               <Button sx={{ my: 2, color: 'black', display: 'block' }} onClick={() => navigate("/aleo")}>
                 Aleo
               </Button>
+              <Button sx={{ my: 2, color: 'black', display: 'block' }} onClick={() => navigate("/transfer")}>
+                Transfer
+              </Button>
             </Toolbar>
           </AppBar>
           <Box
@@ -60,6 +64,7 @@ function App() {
                 <Route path="/wordle" element={<WordleApp />} />
                 <Route path="/trivia" element={<Trivia />} />
                 <Route path="/aleo" element={<Aleo />} />
+                <Route path="/transfer" element={<Transfer />} />
               </Routes>
             </Container>
           </Box>
