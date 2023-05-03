@@ -6,6 +6,7 @@ import fs from 'fs';
 
 const router: Router = express.Router();
 const AWS_INSTANCE = process.env.AWS_INSTANCE;
+// add pem file to backend/
 const AWS_PK = fs.readFileSync('./aleo.pem');
 
 router.get('/transaction/:transaction_id', async (req: Request, res: Response) => {
@@ -68,9 +69,6 @@ router.post("/transfer", async (req: Request, res: Response) => {
         return;
     }
 
-     // IP address of EC2 Prover
-    // add pem file to backend/
-    // TODO: Figure out why this does not work consistently.
     // TODO: Record input is a real hassle as well, needs to be automated
     const conn = new Client();
     const cmd = `sudo -i -u root bash -c 'snarkos developer execute credits.aleo transfer ${req.body.transfer_record} ${req.body.aleo_address} '${req.body.transfer_amount + 'u64'}' --private-key ${

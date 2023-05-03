@@ -120,8 +120,8 @@ export default function SudoKu() {
                 body: JSON.stringify({ "puzzle": puzzleArray, "solution": getUserSolutionArray(), "private_key": aleoPrivateKey }),
                 timeout: 2400000 // 4 minute
             });
-            const responseData = await response.json();
-            setAleoResponse(responseData["output"]);
+            // const responseData = await response.json();
+            // setAleoResponse(responseData["output"]);
         } catch (error: any) {
             if (error.name === 'AbortError') {
                 setAleoResponse("Request timed out!");
@@ -268,6 +268,7 @@ export default function SudoKu() {
                         <Grid item xs={12}>
                             <Button variant="contained" color="error" onClick={submitToAleo} sx={{ marginRight: 3 }}> Verify with Aleo </Button>
                             <TextField label="Aleo Private Key" variant="standard" value={aleoPrivateKey} sx={{ width: 500 }} onChange={(newValue) => setAleoPrivateKey(newValue.target.value)}></TextField>
+                            <TextField label="Aleo Record" variant="standard" value={aleoPrivateKey} sx={{ width: 500 }} onChange={(newValue) => setAleoPrivateKey(newValue.target.value)}></TextField>
                         </Grid>
                         <Grid item xs={3}>
                             <Button variant="contained" color="success" onClick={submitToNoir}> Verify with Noir </Button>
