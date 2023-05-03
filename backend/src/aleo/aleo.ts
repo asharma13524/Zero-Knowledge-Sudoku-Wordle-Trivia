@@ -1,9 +1,12 @@
 import express, { Router, Request, Response } from "express";
 import fetch from 'cross-fetch';
 import util from "util";
-const exec = util.promisify(require('child_process').exec);
+import { Client } from 'ssh2';
+import fs from 'fs';
 
 const router: Router = express.Router();
+const AWS_INSTANCE = process.env.AWS_INSTANCE;
+const AWS_PK = fs.readFileSync('./aleo.pem');
 
 router.get('/transaction/:transaction_id', async (req: Request, res: Response) => {
     console.log(`${req.originalUrl} called`);
@@ -30,6 +33,67 @@ router.post('/decrypt', async (req: Request, res: Response) => {
     console.log(cmd);
     const { stdout, stderr } = await exec(cmd);
     res.json({ "output": stdout });
+});
+
+router.post("/transfer", async (req: Request, res: Response) => {
+    console.log(`${req.originalUrl} called with ${JSON.stringify(req.body)}`);
+    console.log(req.body);
+    if (req.body.aleo_address === "" || req.body.aleo_address == null) {
+        res.json({ error: "aleo address is required" });
+        return;
+    }
+
+    if (req.body.private_key === "" || req.body.private_key == null) {
+        res.json({ error: "private_key is required" });
+        return;
+    }
+
+    if (req.body.transfer_record === "" || req.body.transfer_record == null) {
+        res.json({ error: "transfer_record is required" });
+        return;
+    }
+
+    if (req.body.transfer_amount === "" || req.body.transfer_amount == null) {
+        res.json({ error: "Amount of aleo credits to transfer is required" });
+        return;
+    }
+
+    if (req.body.fee_record === "" || req.body.fee_record == null) {
+        res.json({ error: "fee_record is required" });
+        return;
+    }
+
+    if (req.body.fee_amount === "" || req.body.fee_amount == null) {
+        res.json({ error: "fee_amount is required" });
+        return;
+    }
+
+     // IP address of EC2 Prover
+    // add pem file to backend/
+    // TODO: Figure out why this does not work consistently.
+    // TODO: Record input is a real hassle as well, needs to be automated
+    const conn = new Client();
+    const cmd = `sudo -i -u root bash -c 'snarkos developer execute credits.aleo transfer ${req.body.transfer_record} ${req.body.aleo_address} '${req.body.transfer_amount + 'u64'}' --private-key ${
+    req.body.private_key
+    } --query 'http://localhost:3030' --broadcast 'http://localhost:3030/testnet3/transaction/broadcast' --fee ${req.body.fee_amount} -r ${req.body.fee_record}'`;
+    conn.on('ready', function() {
+        conn.exec(cmd, function(err, stream) {
+            if (err) throw err;
+            stream.on('close', function(code, signal) {
+                console.log(`Command '${cmd}' completed with code ${code}`);
+                conn.end();
+            }).on('data', function(data) {
+                console.log('stdout: ' + data);
+                // Can probably parse successful txn or something
+            }).stderr.on('data', function(data) {
+                console.error('stderr: ' + data);
+            });
+        });
+    }).connect({
+        host: AWS_INSTANCE,
+        username: 'ubuntu', // Replace with your SSH username
+        privateKey: AWS_PK
+    });
 });
 
 export default router;
